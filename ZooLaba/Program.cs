@@ -23,20 +23,23 @@ namespace AnimalZoo
       Color = color;
     }
 
+    // Virtual позволяет наследникам расширить информацию, не переписывая базовую часть
     public virtual string GetInfo()
     {
-      return $"Кличка: {Name}, Возраст: {Age}, Среда: {Habitat}, " +
-             $"Питание: {Diet}, Вес: {Weight} кг, Окрас: {Color}";
+      return $"Name: {Name}, Age: {Age}, Habitat: {Habitat}, " +
+             $"Diet: {Diet}, Weight: {Weight} kg, Color: {Color}";
     }
 
     public abstract string GetAnimalType();
 
-    // Виртуальный метод для сравнения животных - нужен, чтобы проверять уникальность при добавлении, virtual позволяет переопределить его в классах-наследниках для учёта их уникальных полей
+    // Сравнение по основным полям + GetType() чтобы не смешивать рыб с птицами
     public virtual bool IsEqualTo(Animal other)
     {
-      if (other == null) return false;
+      if (other == null)
+      {
+        return false;
+      }
 
-      // Сравниваем по основным полям, приводя строки к нижнему регистру для "регистронезависимости", GetType() проверяет, что объекты принадлежат одному классу (оба Mammal, оба Bird и т.д.)
       return this.Name.ToLower() == other.Name.ToLower() &&
              this.Age == other.Age &&
              this.Habitat.ToLower() == other.Habitat.ToLower() &&
@@ -49,24 +52,34 @@ namespace AnimalZoo
     public bool HasFur { get; set; }
 
     public Mammal(string name, int age, string habitat, string diet, double weight, string color, bool hasFur)
-        : base(name, age, habitat, diet, weight, color)
+      : base(name, age, habitat, diet, weight, color)
     {
       HasFur = hasFur;
     }
 
     public override string GetInfo()
     {
-      string furStatus = HasFur ? "есть" : "нет";
-      return base.GetInfo() + $", Тип: Млекопитающее, Шерсть: {furStatus}";
+      string furStatus = HasFur ? "yes" : "no";
+      return base.GetInfo() + $", Type: Mammal, Fur: {furStatus}";
     }
 
-    public override string GetAnimalType() => "Млекопитающее";
+    public override string GetAnimalType()
+    {
+      return "Mammal";
+    }
 
-    // Переопределяем IsEqualTo, чтобы учитывать наличие шерсти при сравнении
+    // Проверка на уникальные поля - шерсть, чтобы отличить двух млекопитающих
     public override bool IsEqualTo(Animal other)
     {
-      if (!base.IsEqualTo(other)) return false;
-      if (!(other is Mammal)) return false;
+      if (!base.IsEqualTo(other))
+      {
+        return false;
+      }
+
+      if (!(other is Mammal))
+      {
+        return false;
+      }
 
       Mammal otherMammal = (Mammal)other;
       return this.HasFur == otherMammal.HasFur;
@@ -78,25 +91,34 @@ namespace AnimalZoo
     public double WingSpan { get; set; }
 
     public Bird(string name, int age, string habitat, string diet, double weight, string color, double wingSpan)
-        : base(name, age, habitat, diet, weight, color)
+      : base(name, age, habitat, diet, weight, color)
     {
       WingSpan = wingSpan;
     }
 
     public override string GetInfo()
     {
-      return base.GetInfo() + $", Тип: Птица, Размах крыльев: {WingSpan} м";
+      return base.GetInfo() + $", Type: Bird, Wingspan: {WingSpan} m";
     }
 
-    public override string GetAnimalType() => "Птица";
+    public override string GetAnimalType()
+    {
+      return "Bird";
+    }
 
     public override bool IsEqualTo(Animal other)
     {
-      if (!base.IsEqualTo(other)) return false;
-      if (!(other is Bird)) return false;
+      if (!base.IsEqualTo(other))
+      {
+        return false;
+      }
+
+      if (!(other is Bird))
+      {
+        return false;
+      }
 
       Bird otherBird = (Bird)other;
-      // Math.Abs и < 0.01 нужны для сравнения дробных чисел с погрешностью, из-за особенностей хранения double нельзя сравнивать через ==
       return Math.Abs(this.WingSpan - otherBird.WingSpan) < 0.01;
     }
   }
@@ -106,22 +128,32 @@ namespace AnimalZoo
     public string WaterType { get; set; }
 
     public Fish(string name, int age, string habitat, string diet, double weight, string color, string waterType)
-        : base(name, age, habitat, diet, weight, color)
+      : base(name, age, habitat, diet, weight, color)
     {
       WaterType = waterType;
     }
 
     public override string GetInfo()
     {
-      return base.GetInfo() + $", Тип: Рыба, Тип воды: {WaterType}";
+      return base.GetInfo() + $", Type: Fish, Water type: {WaterType}";
     }
 
-    public override string GetAnimalType() => "Рыба";
+    public override string GetAnimalType()
+    {
+      return "Fish";
+    }
 
     public override bool IsEqualTo(Animal other)
     {
-      if (!base.IsEqualTo(other)) return false;
-      if (!(other is Fish)) return false;
+      if (!base.IsEqualTo(other))
+      {
+        return false;
+      }
+
+      if (!(other is Fish))
+      {
+        return false;
+      }
 
       Fish otherFish = (Fish)other;
       return this.WaterType.ToLower() == otherFish.WaterType.ToLower();
@@ -133,23 +165,33 @@ namespace AnimalZoo
     public bool IsVenomous { get; set; }
 
     public Reptile(string name, int age, string habitat, string diet, double weight, string color, bool isVenomous)
-        : base(name, age, habitat, diet, weight, color)
+      : base(name, age, habitat, diet, weight, color)
     {
       IsVenomous = isVenomous;
     }
 
     public override string GetInfo()
     {
-      string venomStatus = IsVenomous ? "ядовитое" : "неядовитое";
-      return base.GetInfo() + $", Тип: Пресмыкающееся, Ядовитость: {venomStatus}";
+      string venomStatus = IsVenomous ? "yes" : "no";
+      return base.GetInfo() + $", Type: Reptile, Venomous: {venomStatus}";
     }
 
-    public override string GetAnimalType() => "Пресмыкающееся";
+    public override string GetAnimalType()
+    {
+      return "Reptile";
+    }
 
     public override bool IsEqualTo(Animal other)
     {
-      if (!base.IsEqualTo(other)) return false;
-      if (!(other is Reptile)) return false;
+      if (!base.IsEqualTo(other))
+      {
+        return false;
+      }
+
+      if (!(other is Reptile))
+      {
+        return false;
+      }
 
       Reptile otherReptile = (Reptile)other;
       return this.IsVenomous == otherReptile.IsVenomous;
@@ -168,15 +210,25 @@ namespace AnimalZoo
 
     public override string GetInfo()
     {
-      return base.GetInfo() + $", Тип: Земноводное, Влажность кожи: {SkinMoisture}";
+      return base.GetInfo() + $", Type: Amphibian, Skin moisture: {SkinMoisture}";
     }
 
-    public override string GetAnimalType() => "Земноводное";
+    public override string GetAnimalType()
+    {
+      return "Amphibian";
+    }
 
     public override bool IsEqualTo(Animal other)
     {
-      if (!base.IsEqualTo(other)) return false;
-      if (!(other is Amphibian)) return false;
+      if (!base.IsEqualTo(other))
+      {
+        return false;
+      }
+
+      if (!(other is Amphibian))
+      {
+        return false;
+      }
 
       Amphibian otherAmphibian = (Amphibian)other;
       return this.SkinMoisture.ToLower() == otherAmphibian.SkinMoisture.ToLower();
@@ -185,221 +237,253 @@ namespace AnimalZoo
 
   public sealed class AnimalManager
   {
-    // static - переменная принадлежит классу, а не объекту, readonly - можно задать только один раз, это основа паттерна Singleton - гарантия, что объект будет только один
+    // static + readonly + private constructor - классический Singleton, чтобы менеджер был в единственном экземпляре
     private static readonly AnimalManager _instance = new AnimalManager();
     private List<Animal> _animals;
 
-    // Приватный конструктор - никто извне не сможет создать новый экземпляр через new
     private AnimalManager()
     {
       _animals = new List<Animal>();
     }
 
-    public static AnimalManager Instance => _instance;
+    public static AnimalManager Instance
+    {
+      get
+      {
+        return _instance;
+      }
+    }
 
-    // Свойство только для чтения, отдаёт текущее количество животных
-    public int AnimalsCount => _animals.Count;
+    public int AnimalsCount
+    {
+      get
+      {
+        return _animals.Count;
+      }
+    }
 
     public bool AddAnimal(Animal animal)
     {
-      // Проверяем, нет ли уже такого животного, проходя по всему списку
+      // Проверяются дубликаты перед добавлением - защита от одинаковых записей
       foreach (var existingAnimal in _animals)
       {
-        // Используем виртуальный метод IsEqualTo, который учитывает тип животного и его уникальные поля
         if (existingAnimal.IsEqualTo(animal))
         {
-          Console.WriteLine($"Ошибка: Животное {animal.Name} уже существует в зоопарке!");
+          Console.WriteLine($"Error: Animal {animal.Name} already exists in the zoo!");
           return false;
         }
       }
 
       _animals.Add(animal);
-      Console.WriteLine($"Животное {animal.Name} успешно добавлено в зоопарк!");
+      Console.WriteLine($"Animal {animal.Name} successfully added to the zoo!");
       return true;
     }
 
     public void ShowAllAnimals()
     {
-      Console.WriteLine("\n=== СПИСОК ВСЕХ ЖИВОТНЫХ ===");
-      for (int index = 0; index < _animals.Count; ++index)
+      Console.WriteLine("\n=== ANIMALS LIST ===");
+
+      for (int animalIndex = 0; animalIndex < _animals.Count; ++animalIndex)
       {
-        // i+1 нужно, чтобы показывать пользователю нумерацию с 1, а не с 0
-        Console.WriteLine($"[{index + 1}] {_animals[index].GetInfo()}");
+        // +1 чтобы пользователь видел счет с 1
+        Console.WriteLine($"[{animalIndex + 1}] {_animals[animalIndex].GetInfo()}");
       }
     }
 
-    public void ShowAnimalByName(string name)
+    public void ShowAnimalByName(string searchQuery)
     {
-      string searchName = name.ToLower();
-      // LINQ запрос: ищем всех животных, в имени которых содержится искомый текст, Where фильтрует список, Contains проверяет вхождение подстроки
-      var foundAnimals = _animals.Where(a =>
-          a.Name.ToLower().Contains(searchName)).ToList();
+      string lowerCaseSearchQuery = searchQuery.ToLower();
+      // LINQ-фильтр: поиск вхождения подстроки без учета регистра
+      var foundAnimals = _animals.Where(animal =>
+          animal.Name.ToLower().Contains(lowerCaseSearchQuery)).ToList();
 
       if (foundAnimals.Count == 0)
       {
-        Console.WriteLine($"\nЖивотные с именем '{name}' не найдены.");
+        Console.WriteLine($"\nAnimals with name '{searchQuery}' not found.");
         return;
       }
 
-      Console.WriteLine($"\n=== РЕЗУЛЬТАТЫ ПОИСКА ПО ИМЕНИ '{name}' ===");
+      Console.WriteLine($"\n=== SEARCH RESULTS FOR '{searchQuery}' ===");
+
       foreach (var animal in foundAnimals)
       {
         Console.WriteLine(animal.GetInfo());
       }
     }
 
-    public void ShowAnimalByIndex(int index)
+    public void ShowAnimalByIndex(int animalIndex)
     {
-      // Проверяем, что индекс находится в допустимых пределах, иначе программа крашнется с ошибкой
-      if (index < 0 || index >= _animals.Count)
+      // Защита от выхода за границы массива - иначе IndexOutOfRangeException
+      if (animalIndex < 0 || animalIndex >= _animals.Count)
       {
-        Console.WriteLine("Животного с таким номером не существует.");
+        Console.WriteLine("Animal with this number does not exist.");
         return;
       }
 
-      Console.WriteLine($"\n=== ЖИВОТНОЕ №{index + 1} ===");
-      Console.WriteLine(_animals[index].GetInfo());
+      Console.WriteLine($"\n=== ANIMAL #{animalIndex + 1} ===");
+      Console.WriteLine(_animals[animalIndex].GetInfo());
     }
   }
 
   class Program
   {
-    static void Main(string[] rus)
+    // Константы защищают от опечаток и позволяют изменить значение в одном месте
+    private const string MammalType = "1";
+    private const string BirdType = "2";
+    private const string FishType = "3";
+    private const string ReptileType = "4";
+    private const string AmphibianType = "5";
+
+    private const string ShowAllAnimalsOption = "1";
+    private const string SearchByNameOption = "2";
+    private const string ShowByIndexOption = "3";
+    private const string AddNewAnimalOption = "4";
+    private const string ExitOption = "5";
+
+    static void Main(string[] commandLineArgs)
     {
-      Console.OutputEncoding = System.Text.Encoding.UTF8;
-      Console.WriteLine("=== ДОБРО ПОЖАЛОВАТЬ В СИСТЕМУ УПРАВЛЕНИЯ ЗООПАРКОМ ===\n");
+      Console.WriteLine("=== WELCOME TO ZOO MANAGEMENT SYSTEM ===\n");
 
       AnimalManager manager = AnimalManager.Instance;
-      SeedData(manager);
+      AddTestData(manager);
       ShowMainMenu(manager);
     }
 
-    static void SeedData(AnimalManager manager)
+    static void AddTestData(AnimalManager manager)
     {
-      manager.AddAnimal(new Mammal("Бубон", 5, "лес", "хищник", 15.5, "рыжий", true));
-      manager.AddAnimal(new Bird("Кидала", 2, "город", "всеядное", 0.3, "зеленый", 0.25));
-      manager.AddAnimal(new Fish("Немезис", 1, "океан", "всеядное", 0.1, "оранжевый", "морская"));
-      manager.AddAnimal(new Reptile("Каракал", 8, "джунгли", "хищник", 25.0, "зеленый", true));
-      manager.AddAnimal(new Amphibian("Рыброн", 3, "болото", "насекомоядное", 0.5, "зеленый", "влажная"));
-      Console.WriteLine("Тестовые животные добавлены для демонстрации.\n");
+      manager.AddAnimal(new Mammal("Bob", 5, "forest", "predator", 15.5, "ginger", true));
+      manager.AddAnimal(new Bird("Kesha", 2, "city", "omnivorous", 0.3, "green", 0.25));
+      manager.AddAnimal(new Fish("Nemo", 1, "ocean", "omnivorous", 0.1, "orange", "sea"));
+      manager.AddAnimal(new Reptile("Snake", 8, "jungle", "predator", 25.0, "green", true));
+      manager.AddAnimal(new Amphibian("Frog", 3, "swamp", "insectivorous", 0.5, "green", "moist"));
+      Console.WriteLine("Test animals added for demonstration.\n");
     }
 
     static void ShowMainMenu(AnimalManager manager)
     {
       while (true)
       {
-        Console.WriteLine("\n=== ГЛАВНОЕ МЕНЮ ===");
-        Console.WriteLine("1. Показать всех животных");
-        Console.WriteLine("2. Найти животное по имени");
-        Console.WriteLine("3. Показать животное по номеру");
-        Console.WriteLine("4. Добавить новое животное");
-        Console.WriteLine("5. Выход");
-        Console.Write("Выберите действие (1-5): ");
+        Console.WriteLine("\n=== MAIN MENU ===");
+        Console.WriteLine("1. Show all animals");
+        Console.WriteLine("2. Search animal by name");
+        Console.WriteLine("3. Show animal by number");
+        Console.WriteLine("4. Add new animal");
+        Console.WriteLine("5. Exit");
+        Console.Write("Choose action (1-5): ");
 
-        string choice = Console.ReadLine();
+        string userChoice = Console.ReadLine();
 
-        switch (choice)
+        switch (userChoice)
         {
-          case "1":
+          case ShowAllAnimalsOption:
             manager.ShowAllAnimals();
             break;
-          case "2":
-            Console.Write("Введите имя животного (или часть имени): ");
-            string name = Console.ReadLine();
-            manager.ShowAnimalByName(name);
+
+          case SearchByNameOption:
+            Console.Write("Enter animal name (or part of name): ");
+            string searchName = Console.ReadLine();
+            manager.ShowAnimalByName(searchName);
             break;
-          case "3":
-            Console.Write($"Введите номер животного (от 1 до {manager.AnimalsCount}): ");
-            // TryParse пытается преобразовать ввод в число и возвращает false, если вводится не число, это защита от краша при вводе букв
-            if (int.TryParse(Console.ReadLine(), out int index))
+
+          case ShowByIndexOption:
+            Console.Write($"Enter animal number (from 1 to {manager.AnimalsCount}): ");
+
+            if (int.TryParse(Console.ReadLine(), out int animalNumber))
             {
-              // index-1 потому что пользователь ввёл номер с 1, а в массиве индексы с 0
-              manager.ShowAnimalByIndex(index - 1);
+              // Минус 1 потому что пользовательский счет с 1, а не с 0
+              manager.ShowAnimalByIndex(animalNumber - 1);
             }
             else
             {
-              Console.WriteLine("Некорректный ввод. Введите число.");
+              Console.WriteLine("Invalid input. Please enter a number.");
             }
             break;
-          case "4":
+
+          case AddNewAnimalOption:
             AddNewAnimal(manager);
             break;
-          case "5":
-            Console.WriteLine("Выход из программы. До свидания!");
+
+          case ExitOption:
+            Console.WriteLine("Exiting program. Goodbye!");
             return;
+
           default:
-            Console.WriteLine("Некорректный выбор. Попробуйте снова.");
+            Console.WriteLine("Invalid choice. Please try again.");
             break;
         }
       }
     }
 
-    // Метод проверяет, что строка состоит только из букв, пробелов и дефисов, чтоб окрас животного не вводился числами
+    // Проверяется, что цвет не содержит цифр
     static bool IsOnlyLetters(string input)
     {
-      if (string.IsNullOrWhiteSpace(input)) return false;
-
-      foreach (char c in input)
+      if (string.IsNullOrWhiteSpace(input))
       {
-        // char.IsLetter проверяет, является ли символ буквой (любого алфавита), допускаются также пробелы и дефисы для составных цветов
-        if (!char.IsLetter(c) && c != ' ' && c != '-')
+        return false;
+      }
+
+      foreach (char character in input)
+      {
+        if (!char.IsLetter(character) && character != ' ' && character != '-')
         {
           return false;
         }
       }
+
       return true;
     }
 
     static void AddNewAnimal(AnimalManager manager)
     {
-      Console.WriteLine("\n=== ДОБАВЛЕНИЕ НОВОГО ЖИВОТНОГО ===");
+      Console.WriteLine("\n=== ADDING NEW ANIMAL ===");
 
-      Console.WriteLine("Выберите тип животного:");
-      Console.WriteLine("1. Млекопитающее");
-      Console.WriteLine("2. Птица");
-      Console.WriteLine("3. Рыба");
-      Console.WriteLine("4. Пресмыкающееся");
-      Console.WriteLine("5. Земноводное");
-      Console.Write("Ваш выбор (1-5): ");
+      Console.WriteLine("Select animal type:");
+      Console.WriteLine("1. Mammal");
+      Console.WriteLine("2. Bird");
+      Console.WriteLine("3. Fish");
+      Console.WriteLine("4. Reptile");
+      Console.WriteLine("5. Amphibian");
+      Console.Write("Your choice (1-5): ");
 
-      string typeChoice = Console.ReadLine();
+      string selectedType = Console.ReadLine();
 
-      // Проверяем тип сразу, чтобы не спрашивать остальные данные при неверном типе
-      if (typeChoice != "1" && typeChoice != "2" && typeChoice != "3" && typeChoice != "4" && typeChoice != "5")
+      // Проверяется тип сразу, чтобы не мучить пользователя вводом данных при неверном выборе
+      if (selectedType != MammalType && selectedType != BirdType &&
+          selectedType != FishType && selectedType != ReptileType && selectedType != AmphibianType)
       {
-        Console.WriteLine("Неверный тип животного! Операция отменена.");
+        Console.WriteLine("Invalid animal type! Operation cancelled.");
         return;
       }
 
-      Console.Write("Введите кличку: ");
+      Console.Write("Enter name: ");
       string name = Console.ReadLine();
 
-      Console.Write("Введите возраст (целое число): ");
+      Console.Write("Enter age (integer): ");
       if (!int.TryParse(Console.ReadLine(), out int age))
       {
-        Console.WriteLine("Некорректный возраст. Операция отменена.");
+        Console.WriteLine("Invalid age. Operation cancelled.");
         return;
       }
 
-      Console.Write("Введите среду обитания (например, лес, водоём, пустыня): ");
+      Console.Write("Enter habitat (e.g., forest, ocean, desert): ");
       string habitat = Console.ReadLine();
 
-      Console.Write("Введите тип питания (хищник, травоядное, всеядное): ");
+      Console.Write("Enter diet type (predator, herbivore, omnivorous): ");
       string diet = Console.ReadLine();
 
-      Console.Write("Введите вес (в кг, можно дробное число): ");
+      Console.Write("Enter weight in kg (decimal number allowed): ");
       if (!double.TryParse(Console.ReadLine(), out double weight))
       {
-        Console.WriteLine("Некорректный вес. Операция отменена.");
+        Console.WriteLine("Invalid weight. Operation cancelled.");
         return;
       }
 
-      Console.Write("Введите окрас (только буквы): ");
+      Console.Write("Enter color (letters only): ");
       string color = Console.ReadLine();
 
       if (!IsOnlyLetters(color))
       {
-        Console.WriteLine("Некорректный окрас. Окрас должен содержать только буквы. Операция отменена.");
+        Console.WriteLine("Invalid color. Color must contain only letters. Operation cancelled.");
         return;
       }
 
@@ -407,49 +491,48 @@ namespace AnimalZoo
 
       try
       {
-        // В зависимости от выбранного типа создаём конкретное животное и запрашиваем его уникальные поля
-        switch (typeChoice)
+        switch (selectedType)
         {
-          case "1":
-            Console.Write("Есть шерсть? (да/нет): ");
+          case MammalType:
+            Console.Write("Has fur? (yes/no): ");
             bool hasFur;
             if (!TryGetYesNoInput(out hasFur))
             {
-              Console.WriteLine("Некорректный ввод. Ожидался ответ, начинающийся с 'д' (да) или 'н' (нет). Операция отменена.");
+              Console.WriteLine("Invalid input. Expected answer starting with 'y' (yes) or 'n' (no). Operation cancelled.");
               return;
             }
             newAnimal = new Mammal(name, age, habitat, diet, weight, color, hasFur);
             break;
 
-          case "2":
-            Console.Write("Введите размах крыльев (в метрах, дробное число): ");
+          case BirdType:
+            Console.Write("Enter wingspan in meters (decimal number): ");
             if (!double.TryParse(Console.ReadLine(), out double wingSpan))
             {
-              Console.WriteLine("Некорректный размах крыльев. Операция отменена.");
+              Console.WriteLine("Invalid wingspan. Operation cancelled.");
               return;
             }
             newAnimal = new Bird(name, age, habitat, diet, weight, color, wingSpan);
             break;
 
-          case "3":
-            Console.Write("Введите тип воды (пресная/морская): ");
+          case FishType:
+            Console.Write("Enter water type (fresh/sea): ");
             string waterType = Console.ReadLine();
             newAnimal = new Fish(name, age, habitat, diet, weight, color, waterType);
             break;
 
-          case "4":
-            Console.Write("Ядовитое? (да/нет): ");
+          case ReptileType:
+            Console.Write("Is venomous? (yes/no): ");
             bool isVenomous;
             if (!TryGetYesNoInput(out isVenomous))
             {
-              Console.WriteLine("Некорректный ввод. Ожидался ответ, начинающийся с 'д' (да) или 'н' (нет). Операция отменена.");
+              Console.WriteLine("Invalid input. Expected answer starting with 'y' (yes) or 'n' (no). Operation cancelled.");
               return;
             }
             newAnimal = new Reptile(name, age, habitat, diet, weight, color, isVenomous);
             break;
 
-          case "5":
-            Console.Write("Введите влажность кожи (например, влажная, сухая): ");
+          case AmphibianType:
+            Console.Write("Enter skin moisture (e.g., moist, dry): ");
             string skinMoisture = Console.ReadLine();
             newAnimal = new Amphibian(name, age, habitat, diet, weight, color, skinMoisture);
             break;
@@ -458,18 +541,18 @@ namespace AnimalZoo
         if (newAnimal != null)
         {
           manager.AddAnimal(newAnimal);
-          Console.WriteLine("Информация о новом животном:");
+          Console.WriteLine("New animal information:");
           Console.WriteLine(newAnimal.GetInfo());
         }
       }
       catch (Exception ex)
       {
-        // Ловим все возможные ошибки, чтобы программа не крашнулась, а показала сообщение
-        Console.WriteLine($"Ошибка при создании животного: {ex.Message}");
+        // Проверяются все исключения, чтобы программа не крашала
+        Console.WriteLine($"Error creating animal: {ex.Message}");
       }
     }
 
-    // Метод для обработки ответов да/нет с проверкой только первой буквы, out bool result позволяет вернуть два значения: успешность операции и сам результат
+    // out-параметр позволяет вернуть и успешность операции, и само значение, важна только первая буква - прощается "yes", "yeah", "yep"
     static bool TryGetYesNoInput(out bool result)
     {
       string input = Console.ReadLine().Trim().ToLower();
@@ -480,15 +563,14 @@ namespace AnimalZoo
         return false;
       }
 
-      char firstChar = input[0];
+      char firstCharacter = input[0];
 
-      // Смотрим только на первую букву - если 'д' то true, если 'н' то false
-      if (firstChar == 'д')
+      if (firstCharacter == 'y')
       {
         result = true;
         return true;
       }
-      else if (firstChar == 'н')
+      else if (firstCharacter == 'n')
       {
         result = false;
         return true;
