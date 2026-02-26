@@ -236,7 +236,7 @@ namespace AnimalZoo
 
   public sealed class AnimalManager
   {
-    private static readonly AnimalManager _instance = new AnimalManager();
+    private static readonly AnimalManager S_instance = new AnimalManager();
     private List<Animal> _animals;
 
     private AnimalManager()
@@ -248,7 +248,7 @@ namespace AnimalZoo
     {
       get
       {
-        return _instance;
+        return S_instance;
       }
     }
 
@@ -288,7 +288,8 @@ namespace AnimalZoo
 
     public void ShowAnimalByName(string searchQuery)
     {
-      string lowerCaseSearchQuery = searchQuery.ToLower();
+      string lowerCaseSearchQuery;
+      lowerCaseSearchQuery = searchQuery.ToLower();
       var foundAnimals = _animals.Where(animal =>
           animal.name.ToLower().Contains(lowerCaseSearchQuery)).ToList();
 
@@ -503,6 +504,7 @@ namespace AnimalZoo
             string hasFurInput;
             hasFurInput = Console.ReadLine();
             bool hasFur;
+
             if (!TryGetYesNoInput(hasFurInput, out hasFur))
             {
               Console.WriteLine("Invalid input. Expected answer starting with 'y' (yes) or 'n' (no). Operation cancelled.");
@@ -536,6 +538,7 @@ namespace AnimalZoo
             string isVenomousInput;
             isVenomousInput = Console.ReadLine();
             bool isVenomous;
+
             if (!TryGetYesNoInput(isVenomousInput, out isVenomous))
             {
               Console.WriteLine("Invalid input. Expected answer starting with 'y' (yes) or 'n' (no). Operation cancelled.");
