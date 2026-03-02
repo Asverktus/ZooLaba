@@ -4,6 +4,24 @@ using System.Linq;
 
 namespace AnimalZoo
 {
+  public enum AnimalType
+  {
+    Mammal = 1,
+    Bird = 2,
+    Fish = 3,
+    Reptile = 4,
+    Amphibian = 5
+  }
+
+  public enum MenuOption
+  {
+    ShowAllAnimals = 1,
+    SearchByName = 2,
+    ShowByIndex = 3,
+    AddNewAnimal = 4,
+    Exit = 5
+  }
+
   public abstract class Animal
   {
     public string name { get; set; }
@@ -322,18 +340,6 @@ namespace AnimalZoo
 
   class Program
   {
-    private const string mammalType = "1";
-    private const string birdType = "2";
-    private const string fishType = "3";
-    private const string reptileType = "4";
-    private const string amphibianType = "5";
-
-    private const string showAllAnimalsOption = "1";
-    private const string searchByNameOption = "2";
-    private const string showByIndexOption = "3";
-    private const string addNewAnimalOption = "4";
-    private const string exitOption = "5";
-
     static void Main(string[] commandLineArgs)
     {
       Console.WriteLine("=== WELCOME TO ZOO MANAGEMENT SYSTEM ===\n");
@@ -357,241 +363,249 @@ namespace AnimalZoo
     {
       while (true)
       {
-        Console.WriteLine("\n=== MAIN MENU ===");
-        Console.WriteLine("1. Show all animals");
-        Console.WriteLine("2. Search animal by name");
-        Console.WriteLine("3. Show animal by number");
-        Console.WriteLine("4. Add new animal");
-        Console.WriteLine("5. Exit");
-        Console.Write("Choose action (1-5): ");
+        Console.WriteLine(
+          "\n=== MAIN MENU ===\n" +
+          "1. Show all animals\n" +
+          "2. Search animal by name\n" +
+          "3. Show animal by number\n" +
+          "4. Add new animal\n" +
+          "5. Exit\n" +
+          "Choose action (1-5): "
+        );
 
         string userChoice;
         userChoice = Console.ReadLine();
 
-        switch (userChoice)
+        if (int.TryParse(userChoice, out int parsedChoice))
         {
-          case showAllAnimalsOption:
-            manager.ShowAllAnimals();
-            break;
+          switch (parsedChoice)
+          {
+            case (int)MenuOption.ShowAllAnimals:
+              manager.ShowAllAnimals();
+              break;
 
-          case searchByNameOption:
-            Console.Write("Enter animal name (or part of name): ");
-            string searchName;
-            searchName = Console.ReadLine();
-            manager.ShowAnimalByName(searchName);
-            break;
+            case (int)MenuOption.SearchByName:
+              Console.Write("Enter animal name (or part of name): ");
+              string searchName;
+              searchName = Console.ReadLine();
+              manager.ShowAnimalByName(searchName);
+              break;
 
-          case showByIndexOption:
-            Console.Write($"Enter animal number (from 1 to {manager.animalsCount}): ");
-            string animalNumberInput;
-            animalNumberInput = Console.ReadLine();
+            case (int)MenuOption.ShowByIndex:
+              Console.Write($"Enter animal number (from 1 to {manager.animalsCount}): ");
+              string animalNumberInput;
+              animalNumberInput = Console.ReadLine();
 
-            if (int.TryParse(animalNumberInput, out int animalNumber))
-            {
-              manager.ShowAnimalByIndex(animalNumber - 1);
-            }
-            else
-            {
-              Console.WriteLine("Invalid input. Please enter a number.");
-            }
-            break;
+              if (int.TryParse(animalNumberInput, out int animalNumber))
+              {
+                manager.ShowAnimalByIndex(animalNumber - 1);
+              }
+              else
+              {
+                Console.WriteLine("Invalid input. Please enter a number.");
+              }
+              break;
 
-          case addNewAnimalOption:
-            AddNewAnimal(manager);
-            break;
+            case (int)MenuOption.AddNewAnimal:
+              AddNewAnimal(manager);
+              break;
 
-          case exitOption:
-            Console.WriteLine("Exiting program. Goodbye!");
-            return;
+            case (int)MenuOption.Exit:
+              Console.WriteLine("Exiting program. Goodbye!");
+              return;
 
-          default:
-            Console.WriteLine("Invalid choice. Please try again.");
-            break;
+            default:
+              Console.WriteLine("Invalid choice. Please try again.");
+              break;
+          }
         }
       }
-    }
 
-    static bool IsOnlyLetters(string input)
-    {
-      if (string.IsNullOrWhiteSpace(input))
+      static bool IsOnlyLetters(string input)
       {
-        return false;
-      }
-
-      foreach (char character in input)
-      {
-        if (!char.IsLetter(character) && character != ' ' && character != '-')
+        if (string.IsNullOrWhiteSpace(input))
         {
           return false;
         }
-      }
 
-      return true;
-    }
-
-    static void AddNewAnimal(AnimalManager manager)
-    {
-      Console.WriteLine("\n=== ADDING NEW ANIMAL ===");
-
-      Console.WriteLine("Select animal type:");
-      Console.WriteLine("1. Mammal");
-      Console.WriteLine("2. Bird");
-      Console.WriteLine("3. Fish");
-      Console.WriteLine("4. Reptile");
-      Console.WriteLine("5. Amphibian");
-      Console.Write("Your choice (1-5): ");
-
-      string selectedType;
-      selectedType = Console.ReadLine();
-
-      if (selectedType != mammalType && selectedType != birdType &&
-          selectedType != fishType && selectedType != reptileType && selectedType != amphibianType)
-      {
-        Console.WriteLine("Invalid animal type! Operation cancelled.");
-        return;
-      }
-
-      Console.Write("Enter name: ");
-      string name;
-      name = Console.ReadLine();
-
-      Console.Write("Enter age (integer): ");
-      string ageInput;
-      ageInput = Console.ReadLine();
-
-      if (!int.TryParse(ageInput, out int age))
-      {
-        Console.WriteLine("Invalid age. Operation cancelled.");
-        return;
-      }
-
-      Console.Write("Enter habitat (e.g., forest, ocean, desert): ");
-      string habitat;
-      habitat = Console.ReadLine();
-
-      Console.Write("Enter diet type (predator, herbivore, omnivorous): ");
-      string diet;
-      diet = Console.ReadLine();
-
-      Console.Write("Enter weight in kg (decimal number allowed): ");
-      string weightInput;
-      weightInput = Console.ReadLine();
-
-      if (!double.TryParse(weightInput, out double weight))
-      {
-        Console.WriteLine("Invalid weight. Operation cancelled.");
-        return;
-      }
-
-      Console.Write("Enter color (letters only): ");
-      string color;
-      color = Console.ReadLine();
-
-      if (!IsOnlyLetters(color))
-      {
-        Console.WriteLine("Invalid color. Color must contain only letters. Operation cancelled.");
-        return;
-      }
-
-      Animal newAnimal = null;
-
-      try
-      {
-        switch (selectedType)
+        foreach (char character in input)
         {
-          case mammalType:
-            Console.Write("Has fur? (yes/no): ");
-            string hasFurInput;
-            hasFurInput = Console.ReadLine();
-            bool hasFur;
-
-            if (!TryGetYesNoInput(hasFurInput, out hasFur))
-            {
-              Console.WriteLine("Invalid input. Expected answer starting with 'y' (yes) or 'n' (no). Operation cancelled.");
-              return;
-            }
-            newAnimal = new Mammal(name, age, habitat, diet, weight, color, hasFur);
-            break;
-
-          case birdType:
-            Console.Write("Enter wingspan in meters (decimal number): ");
-            string wingSpanInput;
-            wingSpanInput = Console.ReadLine();
-
-            if (!double.TryParse(wingSpanInput, out double wingSpan))
-            {
-              Console.WriteLine("Invalid wingspan. Operation cancelled.");
-              return;
-            }
-            newAnimal = new Bird(name, age, habitat, diet, weight, color, wingSpan);
-            break;
-
-          case fishType:
-            Console.Write("Enter water type (fresh/sea): ");
-            string waterType;
-            waterType = Console.ReadLine();
-            newAnimal = new Fish(name, age, habitat, diet, weight, color, waterType);
-            break;
-
-          case reptileType:
-            Console.Write("Is venomous? (yes/no): ");
-            string isVenomousInput;
-            isVenomousInput = Console.ReadLine();
-            bool isVenomous;
-
-            if (!TryGetYesNoInput(isVenomousInput, out isVenomous))
-            {
-              Console.WriteLine("Invalid input. Expected answer starting with 'y' (yes) or 'n' (no). Operation cancelled.");
-              return;
-            }
-            newAnimal = new Reptile(name, age, habitat, diet, weight, color, isVenomous);
-            break;
-
-          case amphibianType:
-            Console.Write("Enter skin moisture (e.g., moist, dry): ");
-            string skinMoisture;
-            skinMoisture = Console.ReadLine();
-            newAnimal = new Amphibian(name, age, habitat, diet, weight, color, skinMoisture);
-            break;
+          if (!char.IsLetter(character) && character != ' ' && character != '-')
+          {
+            return false;
+          }
         }
 
-        if (newAnimal != null)
+        return true;
+      }
+
+      static void AddNewAnimal(AnimalManager manager)
+      {
+        Console.WriteLine(
+          "\n=== ADDING NEW ANIMAL ===\n" +
+          "Select animal type:\n" +
+          "1. Mammal\n" +
+          "2. Bird\n" +
+          "3. Fish\n" +
+          "4. Reptile\n" +
+          "5. Amphibian\n" +
+          "Your choice (1-5): "
+        );
+
+        string selectedType;
+        selectedType = Console.ReadLine();
+
+        if (!int.TryParse(selectedType, out int typeChoice) ||
+            !Enum.IsDefined(typeof(AnimalType), typeChoice))
         {
-          manager.AddAnimal(newAnimal);
-          Console.WriteLine("New animal information:");
-          Console.WriteLine(newAnimal.GetInfo());
+          Console.WriteLine("Invalid animal type! Operation cancelled.");
+          return;
+        }
+
+        Console.Write("Enter name: ");
+        string name;
+        name = Console.ReadLine();
+
+        Console.Write("Enter age (integer): ");
+        string ageInput;
+        ageInput = Console.ReadLine();
+
+        if (!int.TryParse(ageInput, out int age))
+        {
+          Console.WriteLine("Invalid age. Operation cancelled.");
+          return;
+        }
+
+        Console.Write("Enter habitat (e.g., forest, ocean, desert): ");
+        string habitat;
+        habitat = Console.ReadLine();
+
+        Console.Write("Enter diet type (predator, herbivore, omnivorous): ");
+        string diet;
+        diet = Console.ReadLine();
+
+        Console.Write("Enter weight in kg (decimal number allowed): ");
+        string weightInput;
+        weightInput = Console.ReadLine();
+
+        if (!double.TryParse(weightInput, out double weight))
+        {
+          Console.WriteLine("Invalid weight. Operation cancelled.");
+          return;
+        }
+
+        Console.Write("Enter color (letters only): ");
+        string color;
+        color = Console.ReadLine();
+
+        if (!IsOnlyLetters(color))
+        {
+          Console.WriteLine("Invalid color. Color must contain only letters. Operation cancelled.");
+          return;
+        }
+
+        Animal newAnimal = null;
+
+        try
+        {
+          AnimalType animalTypeEnum = (AnimalType)int.Parse(selectedType);
+
+          switch (animalTypeEnum)
+          {
+            case AnimalType.Mammal:
+              Console.Write("Has fur? (yes/no): ");
+              string hasFurInput;
+              hasFurInput = Console.ReadLine();
+              bool hasFur;
+
+              if (!TryGetYesNoInput(hasFurInput, out hasFur))
+              {
+                Console.WriteLine("Invalid input. Expected answer starting with 'y' (yes) or 'n' (no). Operation cancelled.");
+                return;
+              }
+              newAnimal = new Mammal(name, age, habitat, diet, weight, color, hasFur);
+              break;
+
+            case AnimalType.Bird:
+              Console.Write("Enter wingspan in meters (decimal number): ");
+              string wingSpanInput;
+              wingSpanInput = Console.ReadLine();
+
+              if (!double.TryParse(wingSpanInput, out double wingSpan))
+              {
+                Console.WriteLine("Invalid wingspan. Operation cancelled.");
+                return;
+              }
+              newAnimal = new Bird(name, age, habitat, diet, weight, color, wingSpan);
+              break;
+
+            case AnimalType.Fish:
+              Console.Write("Enter water type (fresh/sea): ");
+              string waterType;
+              waterType = Console.ReadLine();
+              newAnimal = new Fish(name, age, habitat, diet, weight, color, waterType);
+              break;
+
+            case AnimalType.Reptile:
+              Console.Write("Is venomous? (yes/no): ");
+              string isVenomousInput;
+              isVenomousInput = Console.ReadLine();
+              bool isVenomous;
+
+              if (!TryGetYesNoInput(isVenomousInput, out isVenomous))
+              {
+                Console.WriteLine("Invalid input. Expected answer starting with 'y' (yes) or 'n' (no). Operation cancelled.");
+                return;
+              }
+              newAnimal = new Reptile(name, age, habitat, diet, weight, color, isVenomous);
+              break;
+
+            case AnimalType.Amphibian:
+              Console.Write("Enter skin moisture (e.g., moist, dry): ");
+              string skinMoisture;
+              skinMoisture = Console.ReadLine();
+              newAnimal = new Amphibian(name, age, habitat, diet, weight, color, skinMoisture);
+              break;
+          }
+
+          if (newAnimal != null)
+          {
+            manager.AddAnimal(newAnimal);
+            Console.WriteLine("New animal information:");
+            Console.WriteLine(newAnimal.GetInfo());
+          }
+        }
+        catch (Exception ex)
+        {
+          Console.WriteLine($"Error creating animal: {ex.Message}");
         }
       }
-      catch (Exception ex)
-      {
-        Console.WriteLine($"Error creating animal: {ex.Message}");
-      }
-    }
 
-    static bool TryGetYesNoInput(string input, out bool result)
-    {
-      string processedInput = input.Trim().ToLower();
-      result = false;
-
-      if (string.IsNullOrEmpty(processedInput))
+      static bool TryGetYesNoInput(string input, out bool result)
       {
+        string processedInput = input.Trim().ToLower();
+        result = false;
+
+        if (string.IsNullOrEmpty(processedInput))
+        {
+          return false;
+        }
+
+        char firstCharacter = processedInput[0];
+
+        if (firstCharacter == 'y')
+        {
+          result = true;
+          return true;
+        }
+        else if (firstCharacter == 'n')
+        {
+          result = false;
+          return true;
+        }
+
         return false;
       }
-
-      char firstCharacter = processedInput[0];
-
-      if (firstCharacter == 'y')
-      {
-        result = true;
-        return true;
-      }
-      else if (firstCharacter == 'n')
-      {
-        result = false;
-        return true;
-      }
-
-      return false;
     }
   }
 }
